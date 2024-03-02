@@ -1,5 +1,4 @@
 import pandas as pd
-import json
 from math import radians, sin, cos, sqrt, atan2
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -21,33 +20,25 @@ def haversine(lat1, lon1, lat2, lon2):
 
 df = pd.read_csv("reto.csv")
 
-json_data_list = []
-for _, row in df.iterrows():
-    json_data = row.to_json()
-    json_data_list.append(json.loads(json_data))
-
 sumatorios = {}
-for item in json_data_list:
-    matricula = item['Matricula']
-    lat = item['Latitud']
-    lon = item['Longitud']
-    distancia = item['Distance']
+coordenadas = {}
+
+for _, row in df.iterrows():
+    matricula = row['Matricula']
+    lat = row['Latitud']
+    lon = row['Longitud']
+    distancia = row['Distance']
 
     if matricula in sumatorios:
         sumatorios[matricula] += distancia
     else:
         sumatorios[matricula] = distancia
 
-for matricula, _ in sumatorios.items():
-    total_distance = 0
-    last_lat = None
-    last_lon = None
-    for item in json_data_list:
-        if item['Matricula'] == matricula:
-            lat = item['Latitud']
-            lon = item['Longitud']
-            if last_lat is not None and last_lon is not None:
-                total_distance += haversine(last_lat, last_lon, lat, lon)
-            last_lat = lat
-            last_lon = lon
+    if matricula in coordenadas:
+        last_lat, last_lon = coordenadas[matricula]
+        sumatorios[matricula] += haversine(last_lat, last_lon, lat, lon)
+
+    coordenadas[matricula] = (lat, lon)
+
+for matricula, total_distance in sumatorios.items():
     print(f"Matricula: {matricula}, Sumatorio distancias coordenadas: {total_distance}")
