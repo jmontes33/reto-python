@@ -27,16 +27,15 @@ for _, row in df.iterrows():
     matricula = row['Matricula']
     lat = row['Latitud']
     lon = row['Longitud']
-    distancia = row['Distance']
-
-    if matricula in sumatorios:
-        sumatorios[matricula] += distancia
-    else:
-        sumatorios[matricula] = distancia
 
     if matricula in coordenadas:
         last_lat, last_lon = coordenadas[matricula]
-        sumatorios[matricula] += haversine(last_lat, last_lon, lat, lon)
+        distancia = haversine(last_lat, last_lon, lat, lon)
+
+        if matricula in sumatorios:
+            sumatorios[matricula] += distancia
+        else:
+            sumatorios[matricula] = distancia
 
     coordenadas[matricula] = (lat, lon)
 
