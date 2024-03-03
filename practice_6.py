@@ -13,8 +13,8 @@ async def get_last_position(matricula: str):
     vehiculo = df[df['Matricula'] == matricula]
     if vehiculo.empty:
         return {"error": "Matricula no encontrada"}
-    ultima_posicion = vehiculo['Pos_date'].iloc[0]
-    return {"Matricula": matricula, "Ultima_Posicion": ultima_posicion}
+    date_last_position = vehiculo['Pos_date'].values[0]
+    return {"Matricula": matricula, "Fecha ultima posición": date_last_position}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
